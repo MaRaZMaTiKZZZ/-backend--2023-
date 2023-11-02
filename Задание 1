@@ -1,0 +1,20 @@
+<?php
+function generate_announcement($article_content, $max_length = 250) {
+    // Убираем лишние пробелы и переносы строк
+    $content = preg_replace('/\s+/', ' ', $article_content);
+    // Разбиваем текст на слова
+    $words = explode(' ', $content);
+    // Обрезаем до максимальной длины
+    $announcement = implode(' ', array_slice($words, 0, $max_length));
+    // Добавляем многоточие
+    $announcement .= '...';
+    return $announcement;
+}
+
+// Пример использования
+$article_content = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
+$announcement = generate_announcement($article_content);
+
+// Печать анонса с ссылкой
+echo $announcement . ' <a href="link_to_full_article">Читать дальше</a>';
+?>
