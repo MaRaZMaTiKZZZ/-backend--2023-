@@ -1,0 +1,73 @@
+<?php
+
+function xorBinaryStrings($str1, $str2) {
+    $result = '';
+    $len = max(strlen($str1), strlen($str2));
+
+    $str1 = str_pad($str1, $len, '0', STR_PAD_LEFT);
+    $str2 = str_pad($str2, $len, '0', STR_PAD_LEFT);
+
+    for ($i = 0; $i < $len; $i++) {
+        $result .= $str1[$i] ^ $str2[$i];
+    }
+
+    return $result;
+}
+
+function decodeChar($binCode) {
+    $alphabet = 'АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
+    $codeMap = [
+        '000000' => 'А', '000001' => 'Б', '000010' => 'В', '000011' => 'Г',
+        '000100' => 'Д', '000101' => 'Е', '000110' => 'Ж', '000111' => 'З',
+        '001000' => 'И', '001001' => 'К', '001010' => 'Л', '001011' => 'М',
+        '001100' => 'Н', '001101' => 'О', '001110' => 'П', '001111' => 'Р',
+        '010000' => 'С', '010001' => 'Т', '010010' => 'У', '010011' => 'Ф',
+        '010100' => 'Х', '010101' => 'Ц', '010110' => 'Ч', '010111' => 'Ш',
+        '011000' => 'Щ', '011001' => 'Ъ', '011010' => 'Ы', '011011' => 'Ь',
+        '011100' => 'Э', '011101' => 'Ю', '011110' => 'Я',
+    ];
+
+    return $codeMap[$binCode];
+}
+
+function encodeChar($char) {
+    $alphabet = 'АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
+    $codeMap = array_flip([
+        'А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ж', 'З', 'И', 'К', 'Л', 'М', 'Н',
+        'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ъ',
+        'Ы', 'Ь', 'Э', 'Ю', 'Я'
+    ]);
+
+    return str_pad(decbin($codeMap[$char]), 6, '0', STR_PAD_LEFT);
+}
+
+function decodeMessage($encodedMessage, $key) {
+    $decodedMessage = '';
+
+    for ($i = 0; $i < strlen($encodedMessage); $i += 6) {
+        $binChar = substr($encodedMessage, $i, 6);
+        $decodedChar = xorBinaryStrings($binChar, $key);
+        $decodedMessage .= decodeChar($decodedChar);
+    }
+
+    return $decodedMessage;
+}
+
+function encodeMessage($message, $key) {
+    $encodedMessage = '';
+
+    for ($i = 0; $i < strlen($message); $i++) {
+        $char = $message[$i];
+        $encodedChar = encodeChar($char);
+        $encodedMessage .= xorBinaryStrings($encodedChar, $key);
+    }
+
+    return $encodedMessage;
+}
+
+$encodedMessage = 'РЗМШМГЮПЬДЕКБГЧЛВШ';
+$key = 'ФКН';
+$decodedMessage = decodeMessage($encodedMessage, $key);
+
+echo $decodedMessage;  // ВЕЛОСИПЕДЫБУДУТНАСТОЯЩИМИ
+?>
